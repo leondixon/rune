@@ -1,16 +1,16 @@
 <script setup lang="ts">
 const year = new Date().getFullYear()
-const line = '01'.repeat(36)
+const line = ' ✦ ◇ ◆ ⟡ ◈ ⟡ ◆ ◇ '.repeat(5)
 </script>
 
 <template>
-  <footer class="mt-16 border-t-2 border-dashed border-phosphor-deep bg-void-soft text-phosphor-dim pt-6 pb-8 relative z-[2]">
-    <div class="max-w-[880px] mx-auto px-5 text-center">
-      <p class="text-phosphor-deep text-[0.7rem] opacity-50 mb-2 overflow-hidden font-mono">{{ line }}</p>
-      <p>
-        <span class="font-mono text-[0.85rem] text-phosphor-dim">© {{ year }} · RUNE</span>
-        <span class="mx-2 text-phosphor-deep">//</span>
-        <span class="font-mono text-[0.85rem] text-phosphor-dim">there is no spoon — there is only the loop</span>
+  <footer class="mt-16 border-t border-arcane bg-void-soft text-parchment-dim pt-6 pb-8 relative z-[2] [box-shadow:0_-2px_0_var(--color-arcane-deep)]">
+    <div class="max-w-[920px] mx-auto px-5 text-center">
+      <p class="text-arcane-soft text-[0.7rem] opacity-60 mb-3 overflow-hidden whitespace-nowrap font-body">{{ line }}</p>
+      <p class="font-display text-[0.78rem] uppercase tracking-[0.22em]">
+        <span class="text-parchment-dim">© {{ year }} · RUNE</span>
+        <span class="mx-3 text-gold">⟡</span>
+        <span class="text-parchment-dim">the scroll remembers what the mind forgets</span>
       </p>
     </div>
   </footer>
