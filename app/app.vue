@@ -1,9 +1,10 @@
-<script setup lang="ts">
-const message = ref('Welcome to Nuxt 4')
-</script>
-
 <template>
-  <div>
-    <h1>{{ message }}</h1>
+  <div class="flex flex-col min-h-screen">
+    <NuxtRouteAnnouncer />
+    <SiteHeader />
+    <main class="flex-1">
+      <NuxtPage />
+    </main>
+    <SiteFooter />
   </div>
 </template>
