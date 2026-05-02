@@ -19,7 +19,9 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "latest",
+    "@tailwindcss/vite": "^4.2.4",
     "eslint": "latest",
-    "eslint-plugin-format": "latest"
+    "eslint-plugin-format": "latest",
+    "tailwindcss": "^4.2.4"
   }
 }
