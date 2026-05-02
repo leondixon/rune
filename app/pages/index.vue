@@ -71,9 +71,14 @@ const sectionHeading = 'font-display text-[1rem] uppercase tracking-[0.28em] tex
         <strong>spaced repetition</strong> — woven into a gamified rite that turns deliberate study into
         a habit you actually keep.
       </p>
-      <div class="flex gap-3 flex-wrap my-6">
-        <a id="begin" href="#sigils" :class="btnPrimaryCls">≫ Inscribe</a>
+      <div class="flex gap-3 flex-wrap items-center my-6">
+        <NuxtLink id="begin" to="/register" :class="btnPrimaryCls">
+          ≫ Inscribe
+        </NuxtLink>
         <a href="#sigils" :class="btnCls">Read the Codex</a>
+        <NuxtLink to="/login" class="ml-2 font-display text-[0.78rem] uppercase tracking-[0.2em] text-parchment-dim hover:text-spark-soft no-underline border-b border-transparent hover:border-spark">
+          Already inscribed? Enter
+        </NuxtLink>
       </div>
       <p class="font-display text-[0.78rem] uppercase tracking-[0.24em] text-parchment-dim">
         the runemaster awakens<span class="ml-1 text-spark animate-blink inline-block">_</span>
@@ -92,8 +97,12 @@ const sectionHeading = 'font-display text-[1rem] uppercase tracking-[0.28em] tex
             <span class="font-decorative text-[1.4rem] tracking-[0.18em] text-gold [text-shadow:0_0_8px_rgba(201,169,97,0.5)]">{{ p.code }}</span>
             <span class="font-body text-[1.1rem] text-spark-soft [text-shadow:0_0_10px_rgba(0,217,255,0.6)]">{{ p.sigil }}</span>
           </div>
-          <h3 class="mb-3">{{ p.title }}</h3>
-          <p class="text-parchment leading-[1.7]">{{ p.body }}</p>
+          <h3 class="mb-3">
+            {{ p.title }}
+          </h3>
+          <p class="text-parchment leading-[1.7]">
+            {{ p.body }}
+          </p>
         </article>
       </div>
     </section>
@@ -112,8 +121,12 @@ const sectionHeading = 'font-display text-[1rem] uppercase tracking-[0.28em] tex
         >
           <span class="font-decorative text-[2.2rem] text-spark-soft leading-none min-w-[3.5ch] [text-shadow:0_0_10px_rgba(0,217,255,0.7),0_0_22px_rgba(91,62,143,0.5)]">{{ s.n }}</span>
           <div>
-            <h3 class="text-[1.15rem] mb-1.5 text-gold-soft">{{ s.t }}</h3>
-            <p class="m-0 text-parchment leading-[1.7]">{{ s.d }}</p>
+            <h3 class="text-[1.15rem] mb-1.5 text-gold-soft">
+              {{ s.t }}
+            </h3>
+            <p class="m-0 text-parchment leading-[1.7]">
+              {{ s.d }}
+            </p>
           </div>
         </li>
       </ol>
@@ -140,12 +153,16 @@ const sectionHeading = 'font-display text-[1rem] uppercase tracking-[0.28em] tex
     </section>
 
     <section :class="`${cardCls} text-center`">
-      <h2 class="mb-4">Ready to inscribe?</h2>
+      <h2 class="mb-4">
+        Ready to inscribe?
+      </h2>
       <p class="mb-6 text-parchment leading-[1.7]">
         The scroll is blank. The runemaster waits. The first sigil is yours to mark.
       </p>
       <div class="flex gap-3 flex-wrap justify-center">
-        <a href="#begin" :class="btnPrimaryCls">≫ Begin Attunement</a>
+        <NuxtLink to="/register" :class="btnPrimaryCls">
+          ≫ Begin Attunement
+        </NuxtLink>
       </div>
     </section>
   </div>
