@@ -7,8 +7,14 @@ export default defineNuxtConfig({
     compatibilityVersion: 4,
   },
   css: ['~/assets/css/main.css'],
+  runtimeConfig: {
+    databaseUrl: '',
+  },
   vite: {
     plugins: [tailwindcss()],
+    optimizeDeps: {
+      include: ['zod'],
+    },
   },
   app: {
     head: {
