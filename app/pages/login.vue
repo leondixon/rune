@@ -39,19 +39,13 @@ async function submit() {
     setUser(res.user)
     await navigateTo('/')
   }
-  catch (err: any) {
-    serverError.value = err?.data?.message ?? 'The scroll did not recognise you.'
+  catch (caught: any) {
+    serverError.value = caught?.data?.message ?? 'The scroll did not recognise you.'
   }
   finally {
     submitting.value = false
   }
 }
-
-const card = 'relative bg-panel/80 border-2 border-arcane [box-shadow:6px_6px_0_var(--color-arcane-deep),0_0_28px_rgba(0,217,255,0.06)_inset] p-7 before:absolute before:inset-0 before:pointer-events-none before:border before:border-gold/20 before:m-1'
-const label = 'font-display text-[0.78rem] uppercase tracking-[0.22em] text-gold mb-2 block'
-const input = 'w-full bg-void-soft/70 border-2 border-arcane text-parchment px-4 py-3 font-body text-[0.95rem] focus:outline-none focus:border-spark focus:[box-shadow:0_0_12px_rgba(0,217,255,0.4)] transition-colors'
-const err = 'text-[0.78rem] text-red-400 mt-1.5 font-display tracking-[0.1em]'
-const btnPrimary = 'inline-block font-display text-[0.88rem] uppercase tracking-[0.2em] px-6 py-3 border-2 !border-spark text-spark-soft bg-arcane/40 [box-shadow:0_0_14px_rgba(0,217,255,0.25)] transition-all hover:bg-spark hover:text-void disabled:opacity-50 disabled:cursor-not-allowed'
 </script>
 
 <template>
@@ -60,7 +54,7 @@ const btnPrimary = 'inline-block font-display text-[0.88rem] uppercase tracking-
       ⟵ Back to the scroll
     </NuxtLink>
 
-    <section :class="card">
+    <Card>
       <h1 class="mb-2">
         <span class="text-gold [text-shadow:0_0_12px_rgba(201,169,97,0.6)]">Enter</span> the scroll
       </h1>
@@ -69,51 +63,39 @@ const btnPrimary = 'inline-block font-display text-[0.88rem] uppercase tracking-
       </p>
 
       <form class="flex flex-col gap-5" novalidate @submit.prevent="submit">
-        <div>
-          <label for="email" :class="label">Email</label>
-          <input
-            id="email"
-            v-model="form.email"
-            type="email"
-            autocomplete="email"
-            :class="input"
-            :aria-invalid="!!errors.email"
-            @blur="validateField('email')"
-          >
-          <p v-if="errors.email" :class="err">
-            {{ errors.email }}
-          </p>
-        </div>
+        <FormField
+          id="email"
+          v-model="form.email"
+          label="Email"
+          type="email"
+          autocomplete="email"
+          :error="errors.email"
+          @blur="validateField('email')"
+        />
 
-        <div>
-          <label for="password" :class="label">Password</label>
-          <input
-            id="password"
-            v-model="form.password"
-            type="password"
-            autocomplete="current-password"
-            :class="input"
-            :aria-invalid="!!errors.password"
-            @blur="validateField('password')"
-          >
-          <p v-if="errors.password" :class="err">
-            {{ errors.password }}
-          </p>
-        </div>
+        <FormField
+          id="password"
+          v-model="form.password"
+          label="Password"
+          type="password"
+          autocomplete="current-password"
+          :error="errors.password"
+          @blur="validateField('password')"
+        />
 
-        <p v-if="serverError" :class="err">
+        <p v-if="serverError" class="text-[0.78rem] text-red-400 mt-1.5 font-display tracking-[0.1em]">
           {{ serverError }}
         </p>
 
         <div class="flex items-center gap-4 flex-wrap mt-2">
-          <button type="submit" :class="btnPrimary" :disabled="submitting">
+          <Button type="submit" variant="primary" :disabled="submitting">
             {{ submitting ? '≫ Entering…' : '≫ Enter' }}
-          </button>
+          </Button>
           <NuxtLink to="/register" class="font-display text-[0.78rem] uppercase tracking-[0.2em] text-parchment-dim hover:text-spark-soft no-underline">
             New here? Inscribe
           </NuxtLink>
         </div>
       </form>
-    </section>
+    </Card>
   </div>
 </template>
