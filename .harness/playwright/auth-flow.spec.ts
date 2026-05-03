@@ -22,6 +22,7 @@ test('register → cookie → me → logout → login → me → learn/new', asy
 
   // 1. Render register page (visual proof) and pre-fill the form for the screenshot.
   await page.goto('/register')
+  await page.waitForLoadState('networkidle')
   await page.locator('#firstName').fill(firstName)
   await page.locator('#lastName').fill(lastName)
   await page.locator('#email').fill(email)
@@ -58,6 +59,7 @@ test('register → cookie → me → logout → login → me → learn/new', asy
 
   // 7. Render login page
   await page.goto('/login')
+  await page.waitForLoadState('networkidle')
   await page.locator('#email').fill(email)
   await page.locator('#password').fill(password)
   await page.screenshot({ path: shot('03-login-filled.png'), fullPage: true })
