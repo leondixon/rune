@@ -16,7 +16,11 @@
     "verify": "pnpm lint && pnpm typecheck && pnpm fitness",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:push": "drizzle-kit push"
+    "db:push": "drizzle-kit push",
+    "db:up": "scripts/dev-db.sh up",
+    "db:down": "scripts/dev-db.sh down",
+    "db:reset": "scripts/dev-db.sh reset",
+    "db:status": "scripts/dev-db.sh status"
   },
   "dependencies": {
     "drizzle-orm": "^0.44.6",
