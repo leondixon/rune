@@ -46,7 +46,7 @@ Override defaults via env: `RUNE_DB_PORT`, `RUNE_DB_PASSWORD`, `RUNE_DB_NAME`.
 `.harness/verify.d/e2e.sh` boots a throwaway Postgres 18 container on a
 random port, runs `pnpm dev` on a random port, runs every Playwright spec
 under `.harness/playwright/`, and tears it all down. Screenshots land in
-`~/.claude/state/last-e2e/<spec>/`. The `auth-flow` spec validates
+`.harness-state/last-e2e/<spec>/`. The `auth-flow` spec validates
 register → cookie → `/api/auth/me` → logout → login → `/api/learn/new`.
 
 First-time setup:

@@ -2,23 +2,25 @@
 # Dimension: behaviour
 # Boots an isolated Postgres in Docker, boots `pnpm dev` against it, then runs
 # every Playwright spec under .harness/playwright/. Specs assert behaviour and
-# capture screenshots into ~/.claude/state/last-e2e/<spec>/. Soft-fail: never
-# returns non-zero — failures appended to $HARNESS_ERR_LOG.
+# capture screenshots into <project>/.harness-state/last-e2e/<spec>/. Soft-fail:
+# never returns non-zero — failures appended to $HARNESS_ERR_LOG.
 # Disable with `touch ~/.claude/state/skip-e2e`.
 set -u
 _DIR="$(dirname "$(readlink -f "$0")")"
 source "${HARNESS_LIB:-$_DIR/../lib.sh}"
-STATE="$(harness_state_dir)"
+GLOBAL_STATE="$(harness_state_dir)"
 ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
 
 PROJECT_ROOT="$ROOT"
 PLAYWRIGHT_DIR="$PROJECT_ROOT/.harness/playwright"
-SCREENSHOT_DIR="$STATE/last-e2e"
-SERVER_LOG="$STATE/last-e2e-server.log"
-PG_LOG="$STATE/last-e2e-postgres.log"
+PROJECT_STATE="$PROJECT_ROOT/.harness-state"
+SCREENSHOT_DIR="$PROJECT_STATE/last-e2e"
+SERVER_LOG="$PROJECT_STATE/last-e2e-server.log"
+PG_LOG="$PROJECT_STATE/last-e2e-postgres.log"
+PW_LOG="$PROJECT_STATE/last-e2e-playwright.log"
 PG_NAME="rune-harness-pg-$$"
 
-[ -f "$STATE/skip-e2e" ] && { echo "[verify:e2e] skipped (skip-e2e flag)" >&2; exit 0; }
+[ -f "$GLOBAL_STATE/skip-e2e" ] && { echo "[verify:e2e] skipped (skip-e2e flag)" >&2; exit 0; }
 [ -f "$PROJECT_ROOT/nuxt.config.ts" ] || exit 0
 ls "$PLAYWRIGHT_DIR"/*.spec.ts >/dev/null 2>&1 || exit 0
 
@@ -42,8 +44,10 @@ if ! ls "$pw_cache"/chromium-* >/dev/null 2>&1; then
 fi
 
 mkdir -p "$SCREENSHOT_DIR"
+rm -rf "$SCREENSHOT_DIR"/* 2>/dev/null || true
 : > "$SERVER_LOG"
 : > "$PG_LOG"
+: > "$PW_LOG"
 
 # Find a free TCP port in the given range. Echoes the port; returns 1 if none.
 pick_port() {
@@ -124,18 +128,16 @@ fi
 
 # 3. Run all Playwright specs
 spec_count="$(ls "$PLAYWRIGHT_DIR"/*.spec.ts | wc -l | tr -d ' ')"
-pw_log="$STATE/last-e2e-playwright.log"
-: > "$pw_log"
 
 if BASE_URL="http://localhost:$APP_PORT" \
    SCREENSHOT_DIR="$SCREENSHOT_DIR" \
    pnpm exec playwright test --config "$PLAYWRIGHT_DIR/playwright.config.ts" \
-       >"$pw_log" 2>&1; then
+       >"$PW_LOG" 2>&1; then
   echo "[verify:e2e] pass ($spec_count spec(s), screenshots in $SCREENSHOT_DIR/)" >&2
 else
-  fail "playwright test failed — tail of $pw_log:"
-  tail -n 40 "$pw_log" >&2
-  [ -n "${HARNESS_ERR_LOG:-}" ] && tail -n 40 "$pw_log" >> "$HARNESS_ERR_LOG"
+  fail "playwright test failed — tail of $PW_LOG:"
+  tail -n 40 "$PW_LOG" >&2
+  [ -n "${HARNESS_ERR_LOG:-}" ] && tail -n 40 "$PW_LOG" >> "$HARNESS_ERR_LOG"
 fi
 
 exit 0
