@@ -9,3 +9,5 @@ node_modules
 !.env.example
 dist
 .vite-inspect
+test-results
+playwright-report

@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "latest",
+    "@playwright/test": "^1.49.0",
     "@tailwindcss/vite": "^4.2.4",
     "drizzle-kit": "^0.31.6",
     "eslint": "latest",
