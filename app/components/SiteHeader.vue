@@ -47,9 +47,15 @@ const ctaCls = 'text-spark-soft no-underline px-4 py-2 border border-spark bg-ar
       </button>
 
       <nav class="hidden sm:flex gap-2 font-display text-[0.85rem] uppercase tracking-[0.18em] items-center">
-        <NuxtLink to="/" active-class="!border-spark !text-spark-soft" :class="navLinkCls">Home</NuxtLink>
-        <NuxtLink to="/#sigils" :class="navLinkCls">Codex</NuxtLink>
-        <NuxtLink to="/#begin" :class="ctaCls">≫ Scribe</NuxtLink>
+        <NuxtLink to="/" active-class="!border-spark !text-spark-soft" :class="navLinkCls">
+          Home
+        </NuxtLink>
+        <NuxtLink to="/#sigils" :class="navLinkCls">
+          Codex
+        </NuxtLink>
+        <NuxtLink to="/#begin" :class="ctaCls">
+          ≫ Scribe
+        </NuxtLink>
       </nav>
     </div>
 
@@ -67,9 +73,15 @@ const ctaCls = 'text-spark-soft no-underline px-4 py-2 border border-spark bg-ar
         class="sm:hidden border-t border-arcane bg-void-soft/95 backdrop-blur-sm font-display text-[0.85rem] uppercase tracking-[0.2em]"
       >
         <div class="max-w-[920px] mx-auto px-5 py-4 flex flex-col gap-2">
-          <NuxtLink to="/" active-class="!border-spark !text-spark-soft" :class="navLinkCls" @click="open = false">Home</NuxtLink>
-          <NuxtLink to="/#sigils" :class="navLinkCls" @click="open = false">Codex</NuxtLink>
-          <NuxtLink to="/#begin" :class="ctaCls" @click="open = false">≫ Scribe</NuxtLink>
+          <NuxtLink to="/" active-class="!border-spark !text-spark-soft" :class="navLinkCls" @click="open = false">
+            Home
+          </NuxtLink>
+          <NuxtLink to="/#sigils" :class="navLinkCls" @click="open = false">
+            Codex
+          </NuxtLink>
+          <NuxtLink to="/#begin" :class="ctaCls" @click="open = false">
+            ≫ Scribe
+          </NuxtLink>
         </div>
       </nav>
     </Transition>
