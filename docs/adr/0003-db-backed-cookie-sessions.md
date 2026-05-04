@@ -4,7 +4,9 @@
 
 ## Context
 
-Auth tokens need to be revocable (logout must immediately invalidate). JWTs are stateless and cannot be revoked without a denylist, which adds the same DB round-trip that sessions already require.
+The app is a single Nuxt server talking to Postgres. Every authenticated request already touches the database, so the usual JWT win — avoiding a session lookup — doesn't apply. JWT's real payoff comes with multi-service or edge auth, stateless horizontal scaling, and cross-domain token passing. None of that is in scope here.
+
+JWT would also add signing-key management, larger cookies, and clock-skew handling, with no offsetting benefit. Revocability is a minor bonus rather than the driver: if instant logout ever matters, sessions give it for free.
 
 ## Decision
 
@@ -12,6 +14,7 @@ Sessions are stored as rows in the `sessions` table (random 32-byte base64url to
 
 ## Consequences
 
-- Logout is a hard delete of the session row — no token leakage window.
+- No key/secret rotation surface — the token is opaque random bytes.
+- Logout is a hard delete of the session row, should it ever be needed.
 - Horizontal scaling requires a shared Postgres instance (already assumed).
 - Expired session pruning is not yet automated; stale rows accumulate until a future cleanup job is added.
