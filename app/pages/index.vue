@@ -50,15 +50,12 @@ const steps = [
   { n: 'IV', t: 'Ascend', d: 'Mastery tiers unlock graver material. The codex grows. So do you.' },
 ]
 
-const cardCls = 'relative bg-panel/80 border-2 border-arcane [box-shadow:6px_6px_0_var(--color-arcane-deep),0_0_28px_rgba(0,217,255,0.06)_inset] p-7 transition-transform duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:[box-shadow:8px_8px_0_var(--color-spark-deep),0_0_42px_rgba(0,217,255,0.14)_inset] before:absolute before:inset-0 before:pointer-events-none before:border before:border-gold/20 before:m-1'
-const btnCls = 'inline-block font-display text-[0.88rem] uppercase tracking-[0.2em] px-6 py-3 border-2 border-arcane text-parchment no-underline transition-all hover:bg-spark hover:text-void hover:border-spark hover:[text-shadow:none] hover:[box-shadow:0_0_22px_var(--color-spark),inset_0_0_12px_rgba(255,255,255,0.4)]'
-const btnPrimaryCls = `${btnCls} !border-spark text-spark-soft bg-arcane/40 [box-shadow:0_0_14px_rgba(0,217,255,0.25)]`
 const sectionHeading = 'font-display text-[1rem] uppercase tracking-[0.28em] text-gold mb-6 pb-3 border-b border-arcane flex items-center gap-3 [text-shadow:0_0_10px_rgba(201,169,97,0.4)]'
 </script>
 
 <template>
   <div class="max-w-[920px] mx-auto px-5 pt-8 pb-16 relative z-[1]">
-    <section :class="`${cardCls} mb-12`">
+    <Card class="mb-12">
       <pre class="text-spark-soft text-[0.78rem] leading-[1.1] mb-6 overflow-x-auto whitespace-pre font-body [text-shadow:0_0_8px_rgba(0,217,255,0.5),0_0_20px_rgba(91,62,143,0.4)]">{{ banner }}</pre>
       <h1 class="mb-5">
         Ten-fold is not a myth.<br>
@@ -72,10 +69,12 @@ const sectionHeading = 'font-display text-[1rem] uppercase tracking-[0.28em] tex
         a habit you actually keep.
       </p>
       <div class="flex gap-3 flex-wrap items-center my-6">
-        <NuxtLink id="begin" to="/register" :class="btnPrimaryCls">
+        <Button id="begin" to="/register" variant="primary">
           ≫ Inscribe
-        </NuxtLink>
-        <a href="#sigils" :class="btnCls">Read the Codex</a>
+        </Button>
+        <Button href="#sigils">
+          Read the Codex
+        </Button>
         <NuxtLink to="/login" class="ml-2 font-display text-[0.78rem] uppercase tracking-[0.2em] text-parchment-dim hover:text-spark-soft no-underline border-b border-transparent hover:border-spark">
           Already inscribed? Enter
         </NuxtLink>
@@ -83,7 +82,7 @@ const sectionHeading = 'font-display text-[1rem] uppercase tracking-[0.28em] tex
       <p class="font-display text-[0.78rem] uppercase tracking-[0.24em] text-parchment-dim">
         the runemaster awakens<span class="ml-1 text-spark animate-blink inline-block">_</span>
       </p>
-    </section>
+    </Card>
 
     <pre class="text-arcane-soft text-center text-[0.85rem] mb-10 opacity-70 font-body animate-glow-drift">{{ divider }}</pre>
 
@@ -92,7 +91,7 @@ const sectionHeading = 'font-display text-[1rem] uppercase tracking-[0.28em] tex
         <span class="text-spark">⟡</span> The Four Sigils
       </h2>
       <div class="grid gap-6 grid-cols-[repeat(auto-fit,minmax(280px,1fr))]">
-        <article v-for="p in pillars" :key="p.code" :class="cardCls">
+        <Card v-for="p in pillars" :key="p.code" tag="article">
           <div class="flex items-center justify-between mb-3">
             <span class="font-decorative text-[1.4rem] tracking-[0.18em] text-gold [text-shadow:0_0_8px_rgba(201,169,97,0.5)]">{{ p.code }}</span>
             <span class="font-body text-[1.1rem] text-spark-soft [text-shadow:0_0_10px_rgba(0,217,255,0.6)]">{{ p.sigil }}</span>
@@ -103,7 +102,7 @@ const sectionHeading = 'font-display text-[1rem] uppercase tracking-[0.28em] tex
           <p class="text-parchment leading-[1.7]">
             {{ p.body }}
           </p>
-        </article>
+        </Card>
       </div>
     </section>
 
@@ -134,7 +133,7 @@ const sectionHeading = 'font-display text-[1rem] uppercase tracking-[0.28em] tex
 
     <pre class="text-arcane-soft text-center text-[0.85rem] mb-10 opacity-70 font-body animate-glow-drift">{{ divider }}</pre>
 
-    <section :class="`${cardCls} mb-12`">
+    <Card class="mb-12">
       <h2 :class="sectionHeading">
         <span class="text-spark">⟡</span> Why Ascend
       </h2>
@@ -150,9 +149,9 @@ const sectionHeading = 'font-display text-[1rem] uppercase tracking-[0.28em] tex
       <blockquote>
         "I cannot create what I do not understand." — R. Feynman
       </blockquote>
-    </section>
+    </Card>
 
-    <section :class="`${cardCls} text-center`">
+    <Card class="text-center">
       <h2 class="mb-4">
         Ready to inscribe?
       </h2>
@@ -160,10 +159,10 @@ const sectionHeading = 'font-display text-[1rem] uppercase tracking-[0.28em] tex
         The scroll is blank. The runemaster waits. The first sigil is yours to mark.
       </p>
       <div class="flex gap-3 flex-wrap justify-center">
-        <NuxtLink to="/register" :class="btnPrimaryCls">
+        <Button to="/register" variant="primary">
           ≫ Begin Attunement
-        </NuxtLink>
+        </Button>
       </div>
-    </section>
+    </Card>
   </div>
 </template>

@@ -45,19 +45,13 @@ async function submit() {
     setUser(res.user)
     await navigateTo('/')
   }
-  catch (err: any) {
-    serverError.value = err?.data?.message ?? 'The scroll rejected your inscription.'
+  catch (caught: any) {
+    serverError.value = caught?.data?.message ?? 'The scroll rejected your inscription.'
   }
   finally {
     submitting.value = false
   }
 }
-
-const cardCls = 'relative bg-panel/80 border-2 border-arcane [box-shadow:6px_6px_0_var(--color-arcane-deep),0_0_28px_rgba(0,217,255,0.06)_inset] p-7 before:absolute before:inset-0 before:pointer-events-none before:border before:border-gold/20 before:m-1'
-const labelCls = 'font-display text-[0.78rem] uppercase tracking-[0.22em] text-gold mb-2 block'
-const inputCls = 'w-full bg-void-soft/70 border-2 border-arcane text-parchment px-4 py-3 font-body text-[0.95rem] focus:outline-none focus:border-spark focus:[box-shadow:0_0_12px_rgba(0,217,255,0.4)] transition-colors'
-const errCls = 'text-[0.78rem] text-red-400 mt-1.5 font-display tracking-[0.1em]'
-const btnPrimaryCls = 'inline-block font-display text-[0.88rem] uppercase tracking-[0.2em] px-6 py-3 border-2 !border-spark text-spark-soft bg-arcane/40 [box-shadow:0_0_14px_rgba(0,217,255,0.25)] transition-all hover:bg-spark hover:text-void disabled:opacity-50 disabled:cursor-not-allowed'
 </script>
 
 <template>
@@ -66,7 +60,7 @@ const btnPrimaryCls = 'inline-block font-display text-[0.88rem] uppercase tracki
       ⟵ Back to the scroll
     </NuxtLink>
 
-    <section :class="cardCls">
+    <Card>
       <h1 class="mb-2">
         <span class="text-gold [text-shadow:0_0_12px_rgba(201,169,97,0.6)]">Inscribe</span> your name
       </h1>
@@ -76,86 +70,58 @@ const btnPrimaryCls = 'inline-block font-display text-[0.88rem] uppercase tracki
 
       <form class="flex flex-col gap-5" novalidate @submit.prevent="submit">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          <div>
-            <label for="firstName" :class="labelCls">First name</label>
-            <input
-              id="firstName"
-              v-model="form.firstName"
-              type="text"
-              autocomplete="given-name"
-              :class="inputCls"
-              :aria-invalid="!!errors.firstName"
-              @blur="validateField('firstName')"
-            >
-            <p v-if="errors.firstName" :class="errCls">
-              {{ errors.firstName }}
-            </p>
-          </div>
-          <div>
-            <label for="lastName" :class="labelCls">Last name</label>
-            <input
-              id="lastName"
-              v-model="form.lastName"
-              type="text"
-              autocomplete="family-name"
-              :class="inputCls"
-              :aria-invalid="!!errors.lastName"
-              @blur="validateField('lastName')"
-            >
-            <p v-if="errors.lastName" :class="errCls">
-              {{ errors.lastName }}
-            </p>
-          </div>
+          <FormField
+            id="firstName"
+            v-model="form.firstName"
+            label="First name"
+            autocomplete="given-name"
+            :error="errors.firstName"
+            @blur="validateField('firstName')"
+          />
+          <FormField
+            id="lastName"
+            v-model="form.lastName"
+            label="Last name"
+            autocomplete="family-name"
+            :error="errors.lastName"
+            @blur="validateField('lastName')"
+          />
         </div>
 
-        <div>
-          <label for="email" :class="labelCls">Email</label>
-          <input
-            id="email"
-            v-model="form.email"
-            type="email"
-            autocomplete="email"
-            :class="inputCls"
-            :aria-invalid="!!errors.email"
-            @blur="validateField('email')"
-          >
-          <p v-if="errors.email" :class="errCls">
-            {{ errors.email }}
-          </p>
-        </div>
+        <FormField
+          id="email"
+          v-model="form.email"
+          label="Email"
+          type="email"
+          autocomplete="email"
+          :error="errors.email"
+          @blur="validateField('email')"
+        />
 
-        <div>
-          <label for="password" :class="labelCls">Password</label>
-          <input
-            id="password"
-            v-model="form.password"
-            type="password"
-            autocomplete="new-password"
-            :class="inputCls"
-            :aria-invalid="!!errors.password"
-            @blur="validateField('password')"
-          >
-          <p v-if="errors.password" :class="errCls">
-            {{ errors.password }}
-          </p>
-          <p v-else class="text-[0.74rem] text-parchment-dim mt-1.5 leading-[1.5]">
-            8+ chars · upper · lower · digit · symbol
-          </p>
-        </div>
+        <FormField
+          id="password"
+          v-model="form.password"
+          label="Password"
+          type="password"
+          autocomplete="new-password"
+          :error="errors.password"
+          hint="8+ chars · upper · lower · digit · symbol"
+          @blur="validateField('password')"
+        />
 
-        <p v-if="serverError" :class="errCls">
+        <p v-if="serverError" class="text-[0.78rem] text-red-400 mt-1.5 font-display tracking-[0.1em]">
           {{ serverError }}
         </p>
 
         <div class="flex items-center gap-4 flex-wrap mt-2">
-          <button type="submit" :class="btnPrimaryCls" :disabled="submitting">
+          <Button type="submit" variant="primary" :disabled="submitting">
             {{ submitting ? '≫ Inscribing…' : '≫ Inscribe' }}
-          </button>
+          </Button>
           <NuxtLink to="/login" class="font-display text-[0.78rem] uppercase tracking-[0.2em] text-parchment-dim hover:text-spark-soft no-underline">
             Already inscribed? Enter
           </NuxtLink>
         </div>
       </form>
-    </section>
+    </Card>
   </div>
 </template>
