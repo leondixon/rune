@@ -21,16 +21,22 @@ harness/
 ├── context.d/              # feedforward sensors (no args, stdout → prompt)
 ├── checks.d/               # maintainability sensors (one file path arg)
 ├── verify.d/               # behaviour + architecture sensors (no args, cwd = repo root)
-└── templates/              # starter fitness functions seeded by /harness-vendor
+└── fitness.d/              # project-owned architecture fitness functions
 ```
 
 ## Activation
 
 The dispatchers are inactive until a project has a `.harness/` directory. Vendor with:
 
-    /harness-vendor
+    /vendor
 
 Copies all modules into `<repo>/.harness/`. Activates the harness for that project and makes the scripts runnable in CI and pre-commit. Commit `.harness/`. Deactivate with `rm -rf .harness/`.
+
+After vendoring, top up with new upstream starters and modules using:
+
+    /sync
+
+Sync is additive: it should seed missing `.harness/fitness.d/<group>/` rules and missing dispatcher modules without overwriting project-owned edits.
 
 ## Conventions
 
@@ -66,6 +72,17 @@ The dispatcher names (`01-context.sh` / `02-checks.sh` / `03-verify.sh`) map to 
 ```
 
 Agents that don't emit one of these shapes should set `HARNESS_FILE_PATHS` or pass paths as CLI args from their hook glue.
+
+## Fitness Rules
+
+Architecture fitness rules live under `.harness/fitness.d/<group>/`. The upstream starter groups currently include:
+
+- `common/` — task-comment issue links, naming clarity, comment hygiene, and optional layer templates.
+- `node/` and `go/` — import cycle checks.
+- `next/` — Next.js cache, server-action, server-only, and layout guardrails.
+- `react/` — React action and optimistic-state guardrails.
+
+Rules are project-owned after vendoring. Delete, edit, or `chmod -x` any rule that does not fit this repo. Project-specific legacy rules may still live directly under `.harness/fitness.d/`.
 
 ## Portability
 
