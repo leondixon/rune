@@ -1,22 +1,18 @@
-# Issue tracker: GitHub
+# Issue Tracker: Linear
 
-Issues and PRDs for this repo live as GitHub issues. Use the `gh` CLI for all operations.
+Issues and PRDs for this repo live in Linear on the `Personal` team. Use the Linear MCP tools for issue operations.
 
 ## Conventions
 
-- **Create an issue**: `gh issue create --title "..." --body "..."`. Use a heredoc for multi-line bodies.
-- **Read an issue**: `gh issue view <number> --comments`, filtering comments by `jq` and also fetching labels.
-- **List issues**: `gh issue list --state open --json number,title,body,labels,comments --jq '[.[] | {number, title, body, labels: [.labels[].name], comments: [.comments[].body]}]'` with appropriate `--label` and `--state` filters.
-- **Comment on an issue**: `gh issue comment <number> --body "..."`
-- **Apply / remove labels**: `gh issue edit <number> --add-label "..."` / `--remove-label "..."`
-- **Close**: `gh issue close <number> --comment "..."`
+- Start implementation work from a Linear issue. If no issue exists, create one before creating a worktree.
+- Use the Linear issue identifier in the worktree directory and branch slug, for example `LEON-6-sync-harness`.
+- Keep status current: move the issue to `In Progress` when work starts, and leave a concise completion comment when the branch is ready.
+- Attach PR links or implementation notes back to the Linear issue.
 
-Infer the repo from `git remote -v` — `gh` does this automatically when run inside a clone.
+## When A Skill Says "Publish To The Issue Tracker"
 
-## When a skill says "publish to the issue tracker"
+Create a Linear issue on the `Personal` team.
 
-Create a GitHub issue.
+## When A Skill Says "Fetch The Relevant Ticket"
 
-## When a skill says "fetch the relevant ticket"
-
-Run `gh issue view <number> --comments`.
+Use the Linear MCP issue lookup with the issue identifier, for example `LEON-6`.
