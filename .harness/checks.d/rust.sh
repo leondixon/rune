@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Type-check a Rust crate without producing artifacts.
 set -u
-_DIR="$(dirname "$(readlink -f "$0")")"
+_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 source "${HARNESS_LIB:-$_DIR/../lib.sh}"
 f="$1"
 root="$(harness_project_root "$f")" || exit 0

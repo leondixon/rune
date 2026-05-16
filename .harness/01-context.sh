@@ -4,7 +4,7 @@
 #
 # Test:  echo '{}' | ./01-context.sh
 set -u
-DIR="$(dirname "$(readlink -f "$0")")"
+DIR="$(cd "$(dirname "$0")" && pwd -P)"
 source "${HARNESS_LIB:-$DIR/lib.sh}"
 
 seen=""

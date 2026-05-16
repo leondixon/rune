@@ -8,29 +8,29 @@ Stack: Nuxt 4 · Drizzle ORM · PostgreSQL · Tailwind v4 · Zod.
 
 ```bash
 pnpm install
-pnpm db:up                                                # local Postgres in Docker
-echo 'NUXT_DATABASE_URL=postgres://postgres:dev@127.0.0.1:5433/rune' > .env
+pnpm db:up                                                # local Postgres + schema push
 pnpm dev                                                  # http://localhost:3000
 ```
 
-Migrations and the 19 seeded top-level domains run automatically on the first
-DB request — no separate migrate/seed step.
+`pnpm db:up` creates a logical database for the current git worktree, writes
+`.env` with `NUXT_DATABASE_URL`, and pushes the current Drizzle schema. The 19
+seeded top-level domains are inserted automatically on the first DB request.
 
-`pnpm db:up` is idempotent (no-op if already running). The container has
-`--restart unless-stopped` so it survives reboots, and the named volume
-`rune-dev-pgdata` keeps your accounts across image upgrades.
+`pnpm db:up` is idempotent. The shared container has `--restart unless-stopped`
+so it survives reboots, and the named volume `rune-dev-pgdata` keeps each
+worktree's logical database across image upgrades.
 
 ## Scripts
 
-| Command | What it does |
-|---|---|
-| `pnpm dev` | Nuxt dev server |
-| `pnpm build` / `pnpm preview` | production build / preview |
-| `pnpm verify` | lint + typecheck + fitness checks (run before pushing) |
-| `pnpm lint:fix` | auto-fix lint |
-| `pnpm db:up` / `db:down` / `db:reset` / `db:status` | dev Postgres lifecycle |
-| `pnpm db:generate` | create a new Drizzle migration after editing `server/db/schema.ts` |
-| `bash .harness/verify.d/e2e.sh` | full e2e (boots an isolated DB; doesn't touch dev) |
+| Command                                             | What it does                                            |
+| --------------------------------------------------- | ------------------------------------------------------- |
+| `pnpm dev`                                          | Nuxt dev server                                         |
+| `pnpm build` / `pnpm preview`                       | production build / preview                              |
+| `pnpm verify`                                       | lint + typecheck + fitness checks (run before pushing)  |
+| `pnpm lint:fix`                                     | auto-fix lint                                           |
+| `pnpm db:up` / `db:down` / `db:reset` / `db:status` | dev Postgres lifecycle                                  |
+| `pnpm db:push`                                      | push `server/db/schema.ts` to the current configured DB |
+| `bash .harness/verify.d/e2e.sh`                     | full e2e (boots an isolated DB; doesn't touch dev)      |
 
 `scripts/dev-db.sh` also exposes `logs` and `psql` for debugging:
 
@@ -76,7 +76,6 @@ server/api/         Nitro route handlers (auth/, learn/)
 server/db/          Drizzle schema + seed data
 server/utils/       db, password, session helpers
 shared/utils/       Zod schemas + shared types
-drizzle/            generated migrations + snapshots
 .harness/           verify.d, fitness.d, playwright specs
 scripts/            dev tooling (dev-db.sh)
 ```

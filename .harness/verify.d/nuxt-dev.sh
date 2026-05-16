@@ -1,21 +1,19 @@
 #!/usr/bin/env bash
 # Dimension: behaviour
 # If nuxt.config.ts is present, boot `pnpm dev` and confirm the dev server
-# becomes ready, then tear it down. Disable with `touch ~/.claude/state/skip-nuxt-dev`.
+# becomes ready, then tear it down. Disable with `touch <HARNESS_STATE>/skip-nuxt-dev` (default: ~/.local/state/harness/skip-nuxt-dev).
 set -u
-_DIR="$(dirname "$(readlink -f "$0")")"
+_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 source "${HARNESS_LIB:-$_DIR/../lib.sh}"
 STATE="$(harness_state_dir)"
 [ -f "$STATE/skip-nuxt-dev" ] && { echo "[verify:nuxt-dev] skipped (skip-nuxt-dev flag)" >&2; exit 0; }
 [ -f "nuxt.config.ts" ] || exit 0
 command -v pnpm >/dev/null 2>&1 || { echo "[verify:nuxt-dev] pnpm not found; skipping" >&2; exit 0; }
-command -v setsid >/dev/null 2>&1 || { echo "[verify:nuxt-dev] setsid(1) not found; skipping" >&2; exit 0; }
-
 WAIT="${NUXT_DEV_WAIT_SECS:-60}"
 LOG="$STATE/last-nuxt-dev.log"
 : > "$LOG"
 
-setsid pnpm dev >"$LOG" 2>&1 < /dev/null &
+$(harness_setsid) pnpm dev >"$LOG" 2>&1 < /dev/null &
 pid=$!
 
 ready=0
@@ -28,9 +26,9 @@ for _ in $(seq 1 "$WAIT"); do
 done
 
 if kill -0 "$pid" 2>/dev/null; then
-  kill -TERM "-$pid" 2>/dev/null || true
+  harness_kill_tree "$pid" TERM
   sleep 1
-  kill -KILL "-$pid" 2>/dev/null || true
+  harness_kill_tree "$pid" KILL
 fi
 wait "$pid" 2>/dev/null || true
 
