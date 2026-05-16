@@ -5,7 +5,7 @@
 set -e
 cd "$(dirname "$0")"
 H="$(cd .. && pwd)"
-STATE="${CLAUDE_HARNESS_STATE:-$HOME/.claude/state}"
+STATE="${HARNESS_STATE:-${XDG_STATE_HOME:-$HOME/.local/state}/harness}"
 mkdir -p "$STATE"
 
 pass() { printf '  \e[32m✓\e[0m %s\n' "$1"; }

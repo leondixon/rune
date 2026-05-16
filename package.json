@@ -14,12 +14,12 @@
     "typecheck": "tsc --noEmit",
     "fitness": "for s in .harness/fitness.d/*.sh; do \"$s\" || exit 1; done",
     "verify": "pnpm lint && pnpm typecheck && pnpm fitness",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
-    "db:push": "drizzle-kit push",
+    "db:push": "scripts/dev-db.sh push",
     "db:up": "scripts/dev-db.sh up",
     "db:down": "scripts/dev-db.sh down",
     "db:reset": "scripts/dev-db.sh reset",
+    "db:psql": "scripts/dev-db.sh psql",
+    "db:logs": "scripts/dev-db.sh logs",
     "db:status": "scripts/dev-db.sh status"
   },
   "dependencies": {
@@ -37,6 +37,7 @@
     "drizzle-kit": "^0.31.6",
     "eslint": "latest",
     "eslint-plugin-format": "latest",
-    "tailwindcss": "^4.2.4"
+    "tailwindcss": "^4.2.4",
+    "typescript": "6.0.3"
   }
 }

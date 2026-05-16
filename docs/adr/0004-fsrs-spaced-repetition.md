@@ -14,4 +14,4 @@ Use FSRS (Free Spaced Repetition Scheduler). Per-user, per-topic state (`stabili
 
 - FSRS state is computed server-side; the client only submits a grade.
 - Topics without a `mastery` row are considered new.
-- The topic tree is seeded once at startup (`seed-domains.ts`) and extended by future migrations — never deleted at runtime.
+- The topic tree is seeded once at startup (`seed-domains.ts`) and extended by future schema changes -- never deleted at runtime.

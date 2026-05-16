@@ -8,7 +8,7 @@ E2E tests need a real Postgres instance (not mocked) to exercise the full auth a
 
 ## Decision
 
-`.harness/verify.d/e2e.sh` orchestrates a full E2E run: boots a throwaway `postgres:18.3` container, starts `pnpm dev`, waits for readiness, runs all `*.spec.ts` files under `.harness/playwright/`, then tears down container and dev server. Each spec runs against the live Nuxt server. Screenshots land in `~/.claude/state/last-e2e/<spec>/`.
+`.harness/verify.d/e2e.sh` orchestrates a full E2E run: boots a throwaway `postgres:18.3` container, pushes the Drizzle schema with `pnpm db:push`, starts `pnpm dev`, waits for readiness, runs all `*.spec.ts` files under `.harness/playwright/`, then tears down container and dev server. Each spec runs against the live Nuxt server. Screenshots land in `.harness-state/last-e2e/<spec>/`.
 
 ## Consequences
 

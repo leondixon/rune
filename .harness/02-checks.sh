@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
-# PostToolUse dispatcher. Routes a file to .harness/checks.d/<lang>.sh.
+# Post-edit dispatcher. Routes a file to .harness/checks.d/<lang>.sh.
 # Exits 0 silently when no project .harness/ exists.
-# Accepts file paths as args (CLI use) or as hook payload on stdin.
+# Accepts file paths via (in order): CLI args; agent hook JSON payload on stdin
+# (Claude Code's `tool_input.file_path[s]` shape); or $HARNESS_FILE_PATHS env.
 #
-# Test:  echo '{"tool_input":{"file_path":"/tmp/foo.py"}}' | ./02-checks.sh
-#        ./02-checks.sh path/to/file.py
+# Test:  ./02-checks.sh path/to/file.py
+#        HARNESS_FILE_PATHS=/tmp/foo.py ./02-checks.sh < /dev/null
+#        echo '{"tool_input":{"file_path":"/tmp/foo.py"}}' | ./02-checks.sh
 set -u
-DIR="$(dirname "$(readlink -f "$0")")"
+DIR="$(cd "$(dirname "$0")" && pwd -P)"
 source "${HARNESS_LIB:-$DIR/lib.sh}"
 STATE="$(harness_state_dir)"; mkdir -p "$STATE"
 ERR_LOG="$STATE/last-errors.log"
@@ -20,11 +22,15 @@ else
   if command -v jq >/dev/null 2>&1; then
     payload="$(cat)"
     paths="$(printf '%s' "$payload" | jq -r '
-      [.tool_input.file_path? // empty,
-       (.tool_input.edits[]?.file_path? // empty),
-       (.tool_input.file_paths[]? // empty)] | unique | .[]' 2>/dev/null)"
+      [ .file_paths[]? // empty,
+        .files[]?      // empty,
+        .file_path?    // empty,
+        .tool_input.file_path?            // empty,
+        (.tool_input.edits[]?.file_path?  // empty),
+        (.tool_input.file_paths[]?        // empty)
+      ] | unique | .[]' 2>/dev/null)"
   fi
-  [ -z "$paths" ] && paths="${CLAUDE_FILE_PATHS:-}"
+  [ -z "$paths" ] && paths="${HARNESS_FILE_PATHS:-}"
 fi
 [ -z "$paths" ] && exit 0
 

@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 # Dimension: behaviour
-# Run project tests with a 60s cap. Disable with `touch ~/.claude/state/skip-tests`.
+# Run project tests with a 60s cap. Disable with `touch <HARNESS_STATE>/skip-tests` (default: ~/.local/state/harness/skip-tests).
 set -u
-_DIR="$(dirname "$(readlink -f "$0")")"
+_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 source "${HARNESS_LIB:-$_DIR/../lib.sh}"
 STATE="$(harness_state_dir)"
 [ -f "$STATE/skip-tests" ] && { echo "[verify:tests] skipped (skip-tests flag)" >&2; exit 0; }
-command -v timeout >/dev/null 2>&1 || { echo "[verify:tests] no timeout(1); skipping" >&2; exit 0; }
+TIMEOUT="$(harness_timeout_cmd)"
+[ -n "$TIMEOUT" ] || { echo "[verify:tests] no timeout(1)/gtimeout(1); skipping" >&2; exit 0; }
 
 cmd=""
 if   [ -f "go.mod" ];        then cmd="go test -count=1 -short ./..."
@@ -18,7 +19,7 @@ fi
 [ -z "$cmd" ] && exit 0
 
 LOG="$STATE/last-tests.log"
-out="$(timeout 60 sh -c "$cmd" 2>&1)"; rc=$?
+out="$("$TIMEOUT" 60 sh -c "$cmd" 2>&1)"; rc=$?
 printf '%s\n' "$out" > "$LOG"
 case $rc in
   0)   echo "[verify:tests] pass ($cmd)" >&2 ;;

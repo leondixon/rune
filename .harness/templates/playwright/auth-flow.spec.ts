@@ -29,7 +29,7 @@ test('register → cookie → me → logout → login → me → learn/new', asy
   await page.locator('#password').fill(password)
   await page.screenshot({ path: shot('01-register-filled.png'), fullPage: true })
 
-  // 2. Register via API. First request triggers migrations + seed; allow extra time.
+  // 2. Register via API. First request triggers seed; allow extra time.
   const registerRes = await page.request.post('/api/auth/register', {
     data: { firstName, lastName, email, password },
     timeout: 60_000,

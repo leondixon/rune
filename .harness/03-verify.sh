@@ -4,7 +4,7 @@
 #
 # Test:  ./03-verify.sh < /dev/null
 set -u
-DIR="$(dirname "$(readlink -f "$0")")"
+DIR="$(cd "$(dirname "$0")" && pwd -P)"
 source "${HARNESS_LIB:-$DIR/lib.sh}"
 STATE="$(harness_state_dir)"; mkdir -p "$STATE"
 export HARNESS_ERR_LOG="$STATE/last-errors.log"

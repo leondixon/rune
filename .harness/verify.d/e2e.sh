@@ -4,9 +4,9 @@
 # every Playwright spec under .harness/playwright/. Specs assert behaviour and
 # capture screenshots into <project>/.harness-state/last-e2e/<spec>/. Soft-fail:
 # never returns non-zero — failures appended to $HARNESS_ERR_LOG.
-# Disable with `touch ~/.claude/state/skip-e2e`.
+# Disable with `touch <HARNESS_STATE>/skip-e2e` (default: ~/.local/state/harness/skip-e2e).
 set -u
-_DIR="$(dirname "$(readlink -f "$0")")"
+_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 source "${HARNESS_LIB:-$_DIR/../lib.sh}"
 GLOBAL_STATE="$(harness_state_dir)"
 ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
@@ -24,7 +24,7 @@ PG_NAME="rune-harness-pg-$$"
 [ -f "$PROJECT_ROOT/nuxt.config.ts" ] || exit 0
 ls "$PLAYWRIGHT_DIR"/*.spec.ts >/dev/null 2>&1 || exit 0
 
-for tool in pnpm setsid docker curl; do
+for tool in pnpm docker curl; do
   command -v "$tool" >/dev/null 2>&1 || { echo "[verify:e2e] skipped ($tool not found)" >&2; exit 0; }
 done
 
@@ -71,9 +71,9 @@ fail() {
 
 cleanup() {
   if [ -n "$server_pid" ] && kill -0 "$server_pid" 2>/dev/null; then
-    kill -TERM "-$server_pid" 2>/dev/null || true
+    harness_kill_tree "$server_pid" TERM
     sleep 1
-    kill -KILL "-$server_pid" 2>/dev/null || true
+    harness_kill_tree "$server_pid" KILL
   fi
   docker rm -f "$PG_NAME" >/dev/null 2>&1 || true
 }
@@ -104,10 +104,18 @@ done
 
 DATABASE_URL="postgres://postgres:harness@127.0.0.1:$PG_PORT/rune"
 
-# 2. Boot dev server
+# 2. Push schema
+if ! NUXT_DATABASE_URL="$DATABASE_URL" pnpm db:push >>"$SERVER_LOG" 2>&1; then
+  fail "pnpm db:push failed — tail of $SERVER_LOG:"
+  tail -n 40 "$SERVER_LOG" >&2
+  [ -n "${HARNESS_ERR_LOG:-}" ] && tail -n 40 "$SERVER_LOG" >> "$HARNESS_ERR_LOG"
+  exit 0
+fi
+
+# 3. Boot dev server
 PORT="$APP_PORT" NUXT_PORT="$APP_PORT" \
 NUXT_DATABASE_URL="$DATABASE_URL" \
-  setsid pnpm dev >"$SERVER_LOG" 2>&1 < /dev/null &
+  $(harness_setsid) pnpm dev >"$SERVER_LOG" 2>&1 < /dev/null &
 server_pid=$!
 
 WAIT="${NUXT_DEV_WAIT_SECS:-60}"
@@ -126,7 +134,7 @@ if [ "$ready" != 1 ]; then
   exit 0
 fi
 
-# 3. Run all Playwright specs
+# 4. Run all Playwright specs
 spec_count="$(ls "$PLAYWRIGHT_DIR"/*.spec.ts | wc -l | tr -d ' ')"
 
 if BASE_URL="http://localhost:$APP_PORT" \

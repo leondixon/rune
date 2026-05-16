@@ -44,9 +44,36 @@ Scripts in `verify.d/` carry a `# Dimension: <name>` header so the file's role i
 
 ## State
 
-- `~/.claude/state/last-errors.log` — written by `02-checks.sh` and `verify.d/tests.sh`, read by `context.d/errors.sh`.
-- `~/.claude/state/last-tests.log` — full test output from the last `Stop`.
-- `~/.claude/state/skip-tests` — touch to disable the test sensor.
+State lives in `$HARNESS_STATE` (default: `${XDG_STATE_HOME:-~/.local/state}/harness`). Files:
+
+- `last-errors.log` — written by `02-checks.sh` and `verify.d/tests.sh`, read by `context.d/errors.sh`.
+- `last-tests.log` — full test output from the last `Stop`.
+- `skip-tests` — touch to disable the test sensor (same pattern for `skip-drizzle`, `skip-e2e`, `skip-nuxt-dev`).
+
+## Agent integration
+
+The dispatcher names (`01-context.sh` / `02-checks.sh` / `03-verify.sh`) map to Claude Code's `UserPromptSubmit` / `PostToolUse` / `Stop` hook events but the scripts themselves are agent-agnostic. Wire them into whichever hook system your agent provides (Codex, etc.), or run them from CI / pre-commit / by hand.
+
+`02-checks.sh` takes file paths from (in order): CLI args, JSON on stdin, or the `HARNESS_FILE_PATHS` env var (newline-separated). The JSON parser (requires `jq`) accepts any of these shapes:
+
+```jsonc
+{"file_paths": ["a.ts", "b.go"]}       // generic
+{"files":      ["a.ts"]}               // generic
+{"file_path":  "a.ts"}                 // generic, single
+{"tool_input": {"file_path": "a.ts"}}  // Claude Code hook payload
+{"tool_input": {"file_paths": [...]}}  // Claude Code multi
+{"tool_input": {"edits": [{"file_path": "a.ts"}]}} // Claude Code edits
+```
+
+Agents that don't emit one of these shapes should set `HARNESS_FILE_PATHS` or pass paths as CLI args from their hook glue.
+
+## Portability
+
+Targets Linux + macOS with `bash` (3.2+) and `git`. The dispatchers, `checks.d/*`, `context.d/*`, and `verify.d/{tests,secrets,project-fitness}.sh` work anywhere those exist. The optional sensors degrade gracefully when their tooling is missing:
+
+- `verify.d/tests.sh` uses `timeout` or `gtimeout` (macOS Homebrew `coreutils`); skips if neither is present.
+- `verify.d/{nuxt-dev,e2e}.sh` and `templates/e2e.sh` use `setsid` for clean process-group teardown when present, otherwise fall back to `pkill -P` to take down child processes (macOS path).
+- `verify.d/e2e.sh` also requires `docker` and `pnpm`; it self-skips otherwise.
 
 ## Test
 

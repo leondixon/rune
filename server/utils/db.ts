@@ -1,6 +1,5 @@
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
 import { drizzle } from 'drizzle-orm/postgres-js'
-import { migrate } from 'drizzle-orm/postgres-js/migrator'
 import postgres from 'postgres'
 import * as schema from '~~/server/db/schema'
 import { seedDomains } from '~~/server/db/seed-domains'
@@ -22,10 +21,6 @@ export function useDb(): Promise<Db> {
   }
 
   ready = (async () => {
-    const migrator = postgres(url, { max: 1 })
-    await migrate(drizzle(migrator), { migrationsFolder: 'drizzle' })
-    await migrator.end()
-
     const pool = postgres(url)
     const db = drizzle(pool, { schema })
     await seedDomains(db)

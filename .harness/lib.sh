@@ -1,7 +1,35 @@
 # Shared helpers for harness modules. Source, don't execute.
 
 harness_state_dir() {
-  echo "${CLAUDE_HARNESS_STATE:-$HOME/.claude/state}"
+  echo "${HARNESS_STATE:-${XDG_STATE_HOME:-$HOME/.local/state}/harness}"
+}
+
+# Echo "timeout" or "gtimeout" if either is on PATH (macOS Homebrew coreutils
+# ships `gtimeout`). Empty if neither — caller should skip.
+harness_timeout_cmd() {
+  if command -v timeout  >/dev/null 2>&1; then echo timeout
+  elif command -v gtimeout >/dev/null 2>&1; then echo gtimeout
+  fi
+}
+
+# Echo "setsid" if available, else empty. Used as `$(harness_setsid) cmd &`
+# so the child gets its own session/group when possible (Linux). macOS lacks
+# setsid; callers should also use `harness_kill_tree` to take down descendants.
+harness_setsid() {
+  command -v setsid >/dev/null 2>&1 && echo setsid
+}
+
+# Kill a backgrounded process and its descendants, portably.
+# Uses negative pid (process-group kill) when setsid was available; otherwise
+# walks children via pkill -P.
+harness_kill_tree() {
+  local pid="$1" sig="${2:-TERM}"
+  if command -v setsid >/dev/null 2>&1; then
+    kill "-${sig}" "-$pid" 2>/dev/null || true
+  else
+    command -v pkill >/dev/null 2>&1 && pkill "-${sig}" -P "$pid" 2>/dev/null || true
+    kill "-${sig}" "$pid" 2>/dev/null || true
+  fi
 }
 
 # Emit the project .harness directory if present in the current git repo.

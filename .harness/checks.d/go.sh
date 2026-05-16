@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Vet a Go file's package.
 set -u
-_DIR="$(dirname "$(readlink -f "$0")")"
+_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 source "${HARNESS_LIB:-$_DIR/../lib.sh}"
 f="$1"
 root="$(harness_project_root "$f")" || exit 0
