@@ -77,10 +77,8 @@ Agents that don't emit one of these shapes should set `HARNESS_FILE_PATHS` or pa
 
 Architecture fitness rules live under `.harness/fitness.d/<group>/`. The upstream starter groups currently include:
 
-- `common/` — task-comment issue links, naming clarity, comment hygiene, and optional layer templates.
-- `node/` and `go/` — import cycle checks.
-- `next/` — Next.js cache, server-action, server-only, and layout guardrails.
-- `react/` — React action and optimistic-state guardrails.
+- `common/` — task-comment issue links, naming clarity, and comment hygiene.
+- `node/` — import cycle checks.
 
 Rules are project-owned after vendoring. Delete, edit, or `chmod -x` any rule that does not fit this repo. Project-specific legacy rules may still live directly under `.harness/fitness.d/`.
 
